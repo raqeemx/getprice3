@@ -1,0 +1,20 @@
+<%- include('partials/head') %>
+<h1>بحث عن هاتف</h1>
+<form class="search-box" action="/search" method="get">
+  <input type="text" name="q" value="<%= q %>" placeholder="اسم الهاتف..." />
+  <button class="btn" type="submit">بحث</button>
+</form>
+
+<% if (!results.length) { %>
+  <p class="muted">لا نتائج. جرّب اسمًا آخر أو <a href="/add">أضف رابط منتج مباشر</a>.</p>
+<% } %>
+
+<div class="list">
+  <% results.forEach(function(p){ %>
+    <a class="row" href="/phone/<%= p.slug %>">
+      <span class="row-title"><%= p.brand %> <%= p.model %> <span class="muted"><%= p.storage||'' %></span></span>
+      <span class="muted">عرض التفاصيل →</span>
+    </a>
+  <% }) %>
+</div>
+<%- include('partials/foot') %>

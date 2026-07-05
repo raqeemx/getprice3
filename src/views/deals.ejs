@@ -1,0 +1,25 @@
+<%- include('partials/head') %>
+<h1>العروض القوية المكتشفة تلقائيًا</h1>
+<p class="muted">عروض على كل الهواتف — حتى التي لا تتابعها — مرتّبة حسب قوة العرض.</p>
+
+<form class="filters" method="get" action="/deals">
+  <select name="store">
+    <option value="">كل المتاجر</option>
+    <% stores.forEach(function(s){ %><option value="<%= s.key %>" <%= filters.store===s.key?'selected':'' %>><%= s.label %></option><% }) %>
+  </select>
+  <select name="brand">
+    <option value="">كل الشركات</option>
+    <% brands.forEach(function(b){ %><option value="<%= b %>" <%= filters.brand===b?'selected':'' %>><%= b %></option><% }) %>
+  </select>
+  <input type="number" name="minDiscount" value="<%= filters.minDiscount||'' %>" placeholder="أدنى خصم %" />
+  <input type="number" name="maxPrice" value="<%= filters.maxPrice||'' %>" placeholder="أعلى سعر" />
+  <input type="text" name="storage" value="<%= filters.storage||'' %>" placeholder="الذاكرة (256GB)" />
+  <button class="btn" type="submit">تصفية</button>
+  <a class="btn ghost" href="/deals">مسح</a>
+</form>
+
+<p class="muted"><%= deals.length %> عرض</p>
+<div class="grid">
+  <% deals.forEach(function(d){ %><%- include('partials/dealCard', { d }) %><% }) %>
+</div>
+<%- include('partials/foot') %>

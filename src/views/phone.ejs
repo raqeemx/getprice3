@@ -1,0 +1,94 @@
+<%- include('partials/head') %>
+<%
+  const fmt = (n) => n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
+  const p = view.phone;
+  const best = view.best;
+%>
+<div class="phone-head">
+  <% if (p.image_url) { %><img class="phone-img" src="<%= p.image_url %>" alt="" onerror="this.style.display='none'"/><% } %>
+  <div>
+    <h1><%= view.fullName %></h1>
+    <% if (best) { %>
+      <p class="reco <%= best.analysis.suspicious.suspicious ? 'warn' : (best.analysis.deal.score>=70?'good':'') %>">
+        <strong><%= best.analysis.recommendation %></strong>
+      </p>
+      <p class="muted">أفضل عرض في <%= best.storeLabel %> بسعر <%= fmt(best.analysis.stats.current) %> ر.س ·
+        Deal Score <%= best.analysis.deal.score %>/100</p>
+    <% } %>
+  </div>
+</div>
+
+<section class="card">
+  <h2>الأسعار في المتاجر</h2>
+  <div class="table-scroll">
+  <table class="tbl">
+    <thead><tr>
+      <th>المتجر</th><th>السعر الحالي</th><th>أقل سعر تاريخي</th><th>متوسط 30ي</th><th>خصم حقيقي</th><th>الحالة</th><th></th>
+    </tr></thead>
+    <tbody>
+    <% view.perStore.forEach(function(s){ var a=s.analysis; %>
+      <tr>
+        <td><%= s.storeLabel %></td>
+        <% if (a) { %>
+          <td class="num strong"><%= fmt(a.stats.current) %></td>
+          <td class="num"><%= fmt(a.stats.min) %> <% if (a.stats.isAllTimeLow){ %><span class="tag sm">الآن</span><% } %></td>
+          <td class="num"><%= fmt(a.stats.avg30) %></td>
+          <td class="num"><%= a.discount.real.toFixed(1) %>%</td>
+          <td><span class="badge <%= a.suspicious.suspicious?'susp':(a.deal.score>=85?'exc':a.deal.score>=70?'strong':a.deal.score>=50?'good':'normal') %>"><%= a.status %></span></td>
+        <% } else { %>
+          <td class="num strong"><%= fmt(s.listing.last_price) %></td><td colspan="4" class="muted">لا يوجد تاريخ كافٍ بعد</td>
+        <% } %>
+        <td><a class="btn sm buy" href="<%= s.listing.product_url %>" target="_blank" rel="noopener">شراء ↗</a></td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2>تاريخ السعر</h2>
+  <canvas id="priceChart" height="110"></canvas>
+  <noscript><p class="muted">فعّل جافاسكربت لعرض الرسم البياني.</p></noscript>
+</section>
+
+<% if (best) { var st=best.analysis.stats; %>
+<section class="card stats-grid">
+  <div><span class="k">أقل سعر تاريخي</span><span class="v"><%= fmt(st.min) %></span></div>
+  <div><span class="k">أعلى سعر تاريخي</span><span class="v"><%= fmt(st.max) %></span></div>
+  <div><span class="k">متوسط 7 أيام</span><span class="v"><%= fmt(st.avg7) %></span></div>
+  <div><span class="k">متوسط 30 يومًا</span><span class="v"><%= fmt(st.avg30) %></span></div>
+  <div><span class="k">متوسط 90 يومًا</span><span class="v"><%= fmt(st.avg90) %></span></div>
+  <div><span class="k">تكرار السعر الحالي</span><span class="v"><%= st.sameCount %>×</span></div>
+</section>
+<% } %>
+
+<section class="card">
+  <h2>متابعة هذا الهاتف</h2>
+  <% if (!user) { %>
+    <p>لمتابعة الهاتف وتلقّي التنبيهات <a href="/login">سجّل الدخول</a> أو <a href="/register">أنشئ حسابًا</a>.</p>
+  <% } else { %>
+    <form method="post" action="/watch" class="watch-form">
+      <input type="hidden" name="phone_id" value="<%= p.id %>" />
+      <div class="field"><label>السعر المستهدف (اختياري)</label>
+        <input type="number" name="target_price" value="<%= watch && watch.target_price || '' %>" placeholder="مثال: 4200" /></div>
+      <div class="field"><label>نبّهني عند انخفاض بنسبة (%)</label>
+        <input type="number" name="drop_pct" value="<%= watch && watch.drop_pct || 15 %>" /></div>
+      <fieldset class="checks">
+        <legend>أنواع التنبيه</legend>
+        <label><input type="checkbox" name="alert_target" <%= !watch||watch.alert_target?'checked':'' %>/> نزول تحت السعر المستهدف</label>
+        <label><input type="checkbox" name="alert_all_time_low" <%= !watch||watch.alert_all_time_low?'checked':'' %>/> أقل سعر تاريخي</label>
+        <label><input type="checkbox" name="alert_pct_drop" <%= !watch||watch.alert_pct_drop?'checked':'' %>/> انخفاض بنسبة معينة</label>
+        <label><input type="checkbox" name="alert_strong_deal" <%= !watch||watch.alert_strong_deal?'checked':'' %>/> عرض قوي</label>
+      </fieldset>
+      <button class="btn primary" type="submit"><%= watch ? 'تحديث المتابعة' : 'متابعة' %></button>
+    </form>
+    <% if (watch) { %>
+      <form method="post" action="/unwatch" class="inline"><input type="hidden" name="phone_id" value="<%= p.id %>"/><button class="link danger">إلغاء المتابعة</button></form>
+    <% } %>
+  <% } %>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>window.__SERIES__ = <%- JSON.stringify(series) %>;</script>
+<%- include('partials/foot') %>

@@ -1,0 +1,48 @@
+<%- include('partials/head') %>
+<%
+  const chans = (settings.channel||'').split(',');
+  const prefBrands = (settings.preferred_brands||'').split(',').map(b=>b.trim());
+  const allBrands = ['Apple','Samsung','Xiaomi','Honor','Huawei','OnePlus','Google','Motorola','Nothing'];
+%>
+<h1>الإعدادات</h1>
+<% if (saved) { %><div class="alert ok">تم حفظ الإعدادات.</div><% } %>
+
+<form method="post" action="/settings" class="card stack">
+  <fieldset class="checks">
+    <legend>قنوات التنبيه المفضّلة</legend>
+    <label><input type="checkbox" name="channel" value="email" <%= chans.includes('email')?'checked':'' %>/> البريد الإلكتروني</label>
+    <label><input type="checkbox" name="channel" value="telegram" <%= chans.includes('telegram')?'checked':'' %>/> Telegram</label>
+    <label><input type="checkbox" name="channel" value="webpush" <%= chans.includes('webpush')?'checked':'' %>/> إشعارات المتصفح</label>
+    <label><input type="checkbox" name="channel" value="console" <%= chans.includes('console')?'checked':'' %>/> Console (سجل الخادم)</label>
+  </fieldset>
+
+  <div class="field"><label>Telegram Chat ID (اختياري)</label>
+    <input type="text" name="telegram_chat_id" value="<%= settings.telegram_chat_id||'' %>" placeholder="مثال: 123456789" /></div>
+
+  <div class="row-fields">
+    <div class="field"><label>الحد الأدنى لنسبة الخصم للتنبيه (%)</label>
+      <input type="number" name="min_discount_pct" value="<%= settings.min_discount_pct %>" /></div>
+    <div class="field"><label>الحد الأعلى للسعر</label>
+      <input type="number" name="max_price" value="<%= settings.max_price||'' %>" placeholder="مثال: 5000" /></div>
+  </div>
+
+  <fieldset class="checks">
+    <legend>الشركات المفضّلة (للاكتشاف التلقائي)</legend>
+    <% allBrands.forEach(function(b){ %>
+      <label><input type="checkbox" name="brands" value="<%= b %>" <%= prefBrands.includes(b)?'checked':'' %>/> <%= b %></label>
+    <% }) %>
+  </fieldset>
+
+  <button class="btn primary" type="submit">حفظ</button>
+</form>
+
+<% if (vapid) { %>
+<div class="card">
+  <h2>إشعارات المتصفح</h2>
+  <p class="muted">فعّل إشعارات Web Push على هذا الجهاز.</p>
+  <button class="btn" id="enablePush">تفعيل إشعارات المتصفح</button>
+  <span id="pushStatus" class="muted"></span>
+</div>
+<script>window.__VAPID__ = <%- JSON.stringify(vapid) %>;</script>
+<% } %>
+<%- include('partials/foot') %>

@@ -1,0 +1,23 @@
+<%
+  const a = d.analysis;
+  const s = a.stats;
+  const statusClass = a.suspicious.suspicious ? 'susp' : (a.deal.score>=85?'exc':a.deal.score>=70?'strong':a.deal.score>=50?'good':'normal');
+  const fmt = (n) => n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
+%>
+<article class="card deal">
+  <div class="deal-head">
+    <span class="badge <%= statusClass %>"><%= a.status %></span>
+    <span class="score">Score <%= a.deal.score %></span>
+  </div>
+  <a class="deal-title" href="/phone/<%= d.phone.slug %>"><%= d.phone.brand %> <%= d.phone.model %> <span class="muted"><%= d.phone.storage||'' %></span></a>
+  <div class="deal-store"><%= a.listing.store.replace('_',' ') %></div>
+  <div class="price-row">
+    <span class="now"><%= fmt(s.current) %> ر.س</span>
+    <% if (s.avg30) { %><span class="was">متوسط 30ي: <%= fmt(s.avg30) %></span><% } %>
+  </div>
+  <div class="disc">خصم حقيقي: <strong><%= a.discount.real.toFixed(1) %>%</strong>
+    <% if (s.isAllTimeLow) { %><span class="tag">أقل سعر تاريخي</span><% } %>
+  </div>
+  <p class="reason muted"><%= a.reason %></p>
+  <a class="btn buy" href="<%= a.listing.product_url %>" target="_blank" rel="noopener">رابط الشراء ↗</a>
+</article>

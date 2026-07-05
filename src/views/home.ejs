@@ -1,0 +1,34 @@
+<%- include('partials/head') %>
+
+<section class="hero">
+  <h1>راقب أسعار الهواتف واكتشف العروض الحقيقية</h1>
+  <p class="lead">نتابع Amazon.sa و Jarir و Noon و Extra باستمرار، نحفظ تاريخ السعر، ونميّز الخصم الحقيقي من الوهمي — ثم ننبّهك فور ظهور فرصة تستحق.</p>
+  <form class="search-box" action="/search" method="get">
+    <input type="text" name="q" placeholder="ابحث عن هاتف: iPhone 15، Galaxy S24 ..." />
+    <button class="btn" type="submit">بحث</button>
+  </form>
+  <div class="hero-cta">
+    <% if (!user) { %><a class="btn primary" href="/register">إنشاء حساب مجاني</a><% } else { %><a class="btn primary" href="/dashboard">اذهب للوحتي</a><% } %>
+    <a class="btn ghost" href="/deals">تصفّح العروض القوية</a>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feat"><h3>👁️ عين تراقب السوق</h3><p>جمع دوري للأسعار من المتاجر السعودية عبر Adapters مستقلة لكل متجر.</p></div>
+  <div class="feat"><h3>🧠 عقل يحلّل</h3><p>يقارن السعر بمتوسط 7/30/90 يومًا وأقل سعر تاريخي ويكشف الخصم الوهمي.</p></div>
+  <div class="feat"><h3>🔔 صوت ينبّه</h3><p>تنبيه فوري باسم الهاتف والمتجر والسعر ونسبة الخصم الحقيقية ورابط الشراء.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>أحدث العروض القوية</h2><a href="/deals">عرض الكل →</a></div>
+  <% if (!deals.length) { %>
+    <p class="muted">لا توجد عروض مكتشفة بعد. شغّل <code>npm run seed</code> ثم <code>npm run poll</code> لتوليد بيانات.</p>
+  <% } %>
+  <div class="grid">
+    <% deals.forEach(function(d){ %>
+      <%- include('partials/dealCard', { d }) %>
+    <% }) %>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

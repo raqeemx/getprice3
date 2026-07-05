@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= typeof title !== 'undefined' ? title : 'GetPrice' %></title>
+  <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="/">📱 GetPrice</a>
+    <nav>
+      <a href="/deals">العروض</a>
+      <a href="/search">بحث</a>
+      <% if (user) { %>
+        <a href="/dashboard">لوحتي</a>
+        <a href="/add">إضافة</a>
+        <a href="/settings">الإعدادات</a>
+        <form method="post" action="/logout" class="inline"><button class="link">خروج (<%= user.name || user.email %>)</button></form>
+      <% } else { %>
+        <a href="/login">دخول</a>
+        <a class="btn" href="/register">إنشاء حساب</a>
+      <% } %>
+    </nav>
+  </div>
+</header>
+<main class="wrap">

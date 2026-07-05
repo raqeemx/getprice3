@@ -1,0 +1,13 @@
+<%- include('partials/head') %>
+<div class="auth-card card">
+  <h1>تسجيل الدخول</h1>
+  <% if (error) { %><div class="alert err"><%= error %></div><% } %>
+  <form method="post" action="/login" class="stack">
+    <div class="field"><label>البريد الإلكتروني</label><input type="email" name="email" value="<%= values.email||'' %>" required /></div>
+    <div class="field"><label>كلمة المرور</label><input type="password" name="password" required /></div>
+    <button class="btn primary" type="submit">دخول</button>
+  </form>
+  <p class="muted">ليس لديك حساب؟ <a href="/register">أنشئ حسابًا</a></p>
+  <p class="muted sm">تجريبي: demo@getprice.local / demo1234</p>
+</div>
+<%- include('partials/foot') %>

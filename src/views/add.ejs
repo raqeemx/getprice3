@@ -1,0 +1,23 @@
+<%- include('partials/head') %>
+<h1>إضافة هاتف أو رابط منتج</h1>
+<% if (error) { %><div class="alert err"><%= error %></div><% } %>
+<% if (ok) { %><div class="alert ok"><%= ok.message %> — <a href="/phone/<%= ok.phone.slug %>">عرض الهاتف</a></div><% } %>
+
+<div class="card">
+  <p class="muted">اكتب اسم هاتف موجود لمتابعته، أو الصق رابط منتج مباشر من Amazon.sa / Jarir / Noon / Extra وحدّد بياناته.</p>
+  <form method="post" action="/add" class="stack">
+    <div class="field"><label>اسم الهاتف أو رابط المنتج</label>
+      <input type="text" name="input" required placeholder="iPhone 15 Pro Max  أو  https://www.amazon.sa/..." /></div>
+    <p class="muted">إذا كان رابطًا، أكمل التالي:</p>
+    <div class="row-fields">
+      <div class="field"><label>الشركة</label><input type="text" name="brand" placeholder="Apple" /></div>
+      <div class="field"><label>الموديل</label><input type="text" name="model" placeholder="iPhone 15 Pro Max" /></div>
+      <div class="field"><label>الذاكرة</label><input type="text" name="storage" placeholder="256GB" /></div>
+    </div>
+    <button class="btn primary" type="submit">إضافة ومتابعة</button>
+  </form>
+</div>
+<p class="muted">المتاجر المدعومة:
+  <% adapters.all().forEach(function(a){ %><span class="tag"><%= a.label %></span> <% }) %>
+</p>
+<%- include('partials/foot') %>

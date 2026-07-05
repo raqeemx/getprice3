@@ -1,0 +1,37 @@
+{
+  "name": "getprice",
+  "version": "1.0.0",
+  "description": "منصة سعودية لمراقبة أسعار الهواتف واكتشاف العروض الحقيقية (Amazon.sa, Jarir, Noon, Extra)",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/db/seed.js",
+    "poll": "node src/scripts/runPoll.js",
+    "scan": "node src/scripts/runScan.js"
+  },
+  "keywords": [
+    "price-tracker",
+    "ksa",
+    "phones",
+    "deals",
+    "alerts"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.10.0",
+    "web-push": "^3.6.7"
+  }
+}

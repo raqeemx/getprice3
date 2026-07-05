@@ -1,0 +1,46 @@
+<%- include('partials/head') %>
+<%
+  const fmt = (n) => n==null?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:0});
+%>
+<div class="sec-head"><h1>لوحتي</h1><a class="btn primary" href="/add">+ إضافة هاتف</a></div>
+
+<% if (!items.length) { %>
+  <div class="card"><p>لا تتابع أي هاتف بعد. <a href="/search">ابحث عن هاتف</a> أو <a href="/add">أضف رابط منتج</a>.</p></div>
+<% } %>
+
+<div class="watch-list">
+<% items.forEach(function(it){ var p=it.view.phone; var best=it.view.best; var st=best&&best.analysis.stats; %>
+  <div class="card watch-card">
+    <div class="watch-main">
+      <a class="wtitle" href="/phone/<%= p.slug %>"><%= p.brand %> <%= p.model %> <span class="muted"><%= p.storage||'' %></span></a>
+      <% if (best) { %>
+        <div class="price-row">
+          <span class="now"><%= fmt(st.current) %> ر.س</span>
+          <span class="muted">في <%= best.storeLabel %></span>
+          <span class="badge <%= best.analysis.suspicious.suspicious?'susp':(best.analysis.deal.score>=85?'exc':best.analysis.deal.score>=70?'strong':best.analysis.deal.score>=50?'good':'normal') %>"><%= best.analysis.status %></span>
+        </div>
+        <div class="mini muted">أقل سعر: <%= fmt(st.min) %> · متوسط 30ي: <%= fmt(st.avg30) %> · خصم حقيقي <%= best.analysis.discount.real.toFixed(1) %>%</div>
+      <% } else { %><div class="muted">لا يوجد تاريخ سعر بعد.</div><% } %>
+      <div class="mini">
+        السعر المستهدف: <strong><%= it.watch.target_price?fmt(it.watch.target_price)+' ر.س':'—' %></strong>
+        <% if (it.watch.target_price && st && st.current <= it.watch.target_price) { %><span class="tag good">تحقق! ✅</span><% } %>
+      </div>
+    </div>
+    <div class="watch-actions">
+      <a class="btn sm" href="/phone/<%= p.slug %>">تعديل</a>
+      <form method="post" action="/unwatch" class="inline"><input type="hidden" name="phone_id" value="<%= p.id %>"/><button class="link danger sm">إزالة</button></form>
+    </div>
+  </div>
+<% }) %>
+</div>
+
+<section class="card">
+  <h2>آخر التنبيهات</h2>
+  <% if (!recentAlerts.length) { %><p class="muted">لا توجد تنبيهات بعد.</p><% } %>
+  <ul class="alerts">
+    <% recentAlerts.forEach(function(al){ %>
+      <li><span class="tag sm"><%= al.kind %></span> <%= al.reason || '' %> <span class="muted">— <%= al.created_at %> · <%= al.channels||'' %></span></li>
+    <% }) %>
+  </ul>
+</section>
+<%- include('partials/foot') %>
